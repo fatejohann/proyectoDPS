@@ -3,10 +3,14 @@ import { StyleSheet, Text, View } from 'react-native';
 import {createNativeStackNavigator} from'@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
 import Login from './src/Screens/Login';
+
 import { useState, useEffect } from 'react';
 
 //TIPOGRAFIA
 import * as Font from 'expo-font'
+import Home from './src/Screens/Profesor/Home';
+import AlumnosHome from './src/Screens/alumnos/Alumnoshome';
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -31,6 +35,10 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName='Login' >
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }}/>
+        
+        <Stack.Screen name="Home" component={Home} options={{ headerShown: false }}/>
+
+        <Stack.Screen name="AlumnoHome" component={AlumnosHome} options={{ headerShown: false }}/>
       </Stack.Navigator>
     </NavigationContainer>  
   );

@@ -14,8 +14,8 @@ import ImagenLogin from '../utils/img/login.png'
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
 import { firebaseConfig } from '../firebase/credenciales';
+import { auth } from '../firebase/credenciales';
 import { useState } from 'react';
-import Home from './Profesor/Home';
  
 
 export default function Login() {
@@ -25,9 +25,7 @@ const navigation = useNavigation();
 const [email, setEmail]=useState('');
 const [password, setPassword]=useState('');
 
-const app= initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
+/*
 const handleSingIngProfesor=()=>{
 
     signInWithEmailAndPassword(auth,email,password)
@@ -62,7 +60,41 @@ const handleSingIngAlumno=()=>{
 }
 
 
+*/
+const handleLogin = async () => {
+    try {
+      // Iniciar sesión con el correo electrónico y la contraseña
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
 
+      // Consultar la colección de usuarios en Firestore para encontrar el usuario que coincide con el correo electrónico ingresado
+      const usuariosRef = collection(db, "usuarios");
+      const q = query(usuariosRef, where("correo", "==", email));
+      const querySnapshot = await getDocs(q);
+
+      querySnapshot.forEach((doc) => {
+        // Obtener los datos del usuario encontrado
+        const usuario = doc.data();
+        
+        // Verificar si el usuario es estudiante o maestro
+        if (usuario.rol === 'estudiante') {
+          // Usuario válido como estudiante
+          // Aquí puedes redirigir al estudiante a su pantalla correspondiente
+          navigation.navigate('AlumnoHome');
+        } else if (usuario.rol === 'maestro') {
+          // Usuario válido como maestro
+          // Aquí puedes redirigir al maestro a su pantalla correspondiente
+          navigation.navigate('Home');
+        }
+      });
+    } catch (error) {
+      console.error("Error al iniciar sesión: ", error);
+    }
+  };
     return (
      
         <View style={styles.container}>
@@ -76,23 +108,24 @@ const handleSingIngAlumno=()=>{
             <Text style={styles.contentText}>Ingresa tus datos</Text>
             <View style={styles.inputContainer}>
                 <Text style={styles.label}>Email:</Text>
-                <TextInput placeholder='Ingresa tu email' style={styles.input} onChangeText={(text)=>setEmail(text)}/>
+                <TextInput placeholder='Ingresa tu email' 
+                style={styles.input} 
+                value={email}
+                onChangeText={setEmail}/>
                 
                 <Text style={styles.label}>Contraseña:</Text>
-                <TextInput placeholder=' Ingresa tu Contraseña' style={styles.input} onChangeText={(text)=>setPassword(text)} />
+                <TextInput placeholder=' Ingresa tu Contraseña'
+                 style={styles.input} 
+                 value={password}
+                 onChangeText={setPassword} />
 
                 <View style={styles.boxBtn}>
-                <TouchableOpacity style={styles.loginButton} onPress={handleSingIngProfesor}>
-                    <Text style={styles.buttonText}>INICIAR SESIÓN PARA PROFESOR</Text>
+                <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+                    <Text style={styles.buttonText}>INICIAR SESIÓN</Text>
                 </TouchableOpacity>
                     
                 </View>
 
-                <View style={styles.boxBtn}>
-                        <TouchableOpacity style={styles.createBtn} onPress={handleSingIngAlumno}>
-                            <Text style={styles.buttonText}>INICIAR SESIÓN PARA ALUMNO</Text>
-                        </TouchableOpacity>
-                    </View>
             </View>
         </View>
     </View>

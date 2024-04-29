@@ -1,21 +1,9 @@
-// Import the functions you need from the SDKs you need
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+// credenciales.js
 
-// Your web app's Firebase configuration
-/*
-export const firebaseConfig = {
-  apiKey: "AIzaSyDDWhUX3kLwT9uzczUTLnKgF-g2bVd0qq0",
-  authDomain: "catedradps-15f08.firebaseapp.com",
-  projectId: "catedradps-15f08",
-  storageBucket: "catedradps-15f08.appspot.com",
-  messagingSenderId: "1064821677800",
-  appId: "1:1064821677800:web:44572404ec7ddb8c81b35d"
-};
-*/
+// Importa las funciones necesarias de los SDK que necesitas
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, addDoc } from "firebase/firestore";
-import { getAuth , initializeAuth, getReactNativePersistence} from "firebase/auth";
+import { getAuth, initializeAuth, getReactNativePersistence } from "firebase/auth";
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 
 // Configuración de Firebase
@@ -29,9 +17,9 @@ const firebaseConfig = {
 };
 
 // Inicializar Firebase
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore();
+
 // Configurar la persistencia de autenticación
 const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(ReactNativeAsyncStorage)
@@ -51,4 +39,4 @@ const guardarUsuarioEnFirestore = async (uid, nombre, rol) => {
   }
 };
 
-export { auth, guardarUsuarioEnFirestore };
+export { auth, db, guardarUsuarioEnFirestore };

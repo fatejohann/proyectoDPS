@@ -1,8 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import {createNativeStackNavigator} from'@react-navigation/native-stack';
-import {NavigationContainer} from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
 import Login from './src/Screens/Login';
+import Registro from './src/Screens/Registro'; // Importa la pantalla de Registro
 
 import { useState, useEffect } from 'react';
 
@@ -26,21 +27,17 @@ export default function App() {
   const loadFonts= async()=>{
     await Font.loadAsync({
       'JockeyOne': require('./src/utils/fonts/JockeyOne-Regular.ttf')
-     
     })
-    
-  setFontsload(true);
+    setFontsload(true);
   }
+  
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName='Login' >
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }}/>
-        
+        <Stack.Screen name="Registro" component={Registro}  options={{ headerShown: false }}/> 
         <Stack.Screen name="Home" component={Home} options={{ headerShown: false }}/>
-
         <Stack.Screen name="AlumnoHome" component={AlumnosHome} options={{ headerShown: false }}/>
-
-        
       </Stack.Navigator>
     </NavigationContainer>  
   );

@@ -5,6 +5,8 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '../firebase/credenciales'; // Asegúrate de importar db también
 import { getDocs, collection, query, where } from 'firebase/firestore';
 
+import colores from '../utils/colores';
+
 export default function Login() {
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
@@ -85,7 +87,8 @@ export default function Login() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ADD8E6',
+    backgroundColor: colores.COLOR_CELESTE,
+    textAlign:'center'
   },
   header: {
     flex: 2,
@@ -96,6 +99,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 25,
     margin: 10,
+    alignItems: 'center',
     fontFamily: 'JockeyOne',
   },
   text: {
@@ -103,12 +107,13 @@ const styles = StyleSheet.create({
     fontSize: 45,
     margin: 10,
     fontFamily: 'JockeyOne',
+    textAlign:'center'
   },
   content: {
     flex: 3,
     backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 50,
-    borderTopRightRadius: 50,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 0,
     paddingTop: 40,
     alignItems: 'center',
     justifyContent: 'start',
@@ -136,7 +141,7 @@ const styles = StyleSheet.create({
     padding: 10,
     margin: 10,
     borderColor: 'white',
-    backgroundColor: 'white',
+    backgroundColor: colores.COLOR_BLANCO,
   },
   boxBtn: {
     alignItems: 'center',
@@ -147,14 +152,14 @@ const styles = StyleSheet.create({
     padding: 15,
     margin: 15,
     borderRadius: 20,
-    backgroundColor: '#8A2BE2',
+    backgroundColor: colores.COLOR_MORADO,
   },
   registerButton: {
     width: 200,
     padding: 15,
     margin: 15,
     borderRadius: 20,
-    backgroundColor: '#008000',
+    backgroundColor: colores.COLOR_ANARANJADO,
   },
   buttonText: {
     color: '#FFFFFF',

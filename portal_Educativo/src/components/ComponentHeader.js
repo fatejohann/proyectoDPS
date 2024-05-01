@@ -27,8 +27,8 @@ const goBack =()=>{
 
             </View>
         
-            <View  style={styles.boxDescrip}>
-            <Text  style={styles.textDescrip}>{descrip}</Text>
+            <View style={styles.boxDescrip}>
+            <Text style={styles.textDescrip}>{descrip}</Text>
             </View>
 
             <View>
@@ -51,8 +51,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around', 
         alignItems: 'center',
-        marginTop:20,
-        
+        marginTop:20,  
     },
     img:{
         width:80,
@@ -61,8 +60,7 @@ const styles = StyleSheet.create({
     text:{
         color:colores.COLOR_BLANCO,
         fontSize:25,
-        fontFamily:"JockeyOne",
-       
+        fontFamily:"JockeyOne", 
     },
     boxDescrip:{
         width:"80%",
@@ -75,13 +73,13 @@ const styles = StyleSheet.create({
     },
     textDescrip:{
         width:"75%",
-        fontSize:25,
+        fontSize:20,
         fontFamily:"JockeyOne",
         textAlign:"center",
     },
     textFooter:{
         color:colores.COLOR_BLANCO,
-        fontSize:25,
+        fontSize:20,
         fontFamily:"JockeyOne",
         margin:20
     }

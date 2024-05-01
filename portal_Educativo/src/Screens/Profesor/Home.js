@@ -10,7 +10,18 @@ import horario from '../../utils/img/horario.png'
 import calificaciones from '../../utils/img/calificaciones.png'
 
 import actividades from '../../utils/img/actividades.png'
+
+import { useNavigation } from '@react-navigation/native';
+
+
 export default function Home (){
+
+ const navigation = useNavigation();
+
+ const irACalificacion=()=>{
+    navigation.navigate('Calificaciones')
+ }
+
     return(
         <View style={styles.container}>
 
@@ -29,7 +40,10 @@ export default function Home (){
                 </View>
 
                 <View style={styles.btnCalificaciones}>
+                    
+                    <TouchableOpacity onPress={irACalificacion}>
                     <Text style={styles.Text}>SUBIR CALIFICACIONES</Text>
+                    </TouchableOpacity>
                     <Image 
                     source={calificaciones}
                     style={styles.ImgBtn}/>

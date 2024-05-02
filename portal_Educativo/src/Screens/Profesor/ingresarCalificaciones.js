@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import imagenProfesor from '../../utils/img/profesor.png'
 import colores from '../../utils/colores';
-export default function ingresarCalificacion(){
+export default function IngresarCalificacion(){
 
     const [notaParcial1, setNotaParcial1] = useState('0.0');
     const [notaParcial2, setNotaParcial2] = useState('0.0');

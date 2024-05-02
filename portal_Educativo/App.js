@@ -14,7 +14,8 @@ import * as Font from 'expo-font'
 import Home from './src/Screens/Profesor/Home';
 import AlumnosHome from './src/Screens/alumnos/Alumnoshome';
 import Calificacion from './src/Screens/Profesor/Calificaciones';
-import ingresarCalificacion from './src/Screens/Profesor/ingresarCalificaciones';
+import IngresarCalificacion from './src/Screens/Profesor/IngresarCalificaciones';
+import Horario from './src/Screens/Profesor/Horario';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -36,7 +37,7 @@ export default function App() {
   
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Calificaciones' >
+      <Stack.Navigator initialRouteName='Login' >
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }}/>
         <Stack.Screen name="Registro" component={Registro}  options={{ headerShown: false }}/> 
 
@@ -46,8 +47,9 @@ export default function App() {
 
       {/* Vistas de la parte del profesor */}
         <Stack.Screen name="Home" component={Home} options={{ headerShown: false }}/>
+        <Stack.Screen name="Horario" component={Horario} options={{ headerShown: false }}/>
         <Stack.Screen name="Calificaciones" component={Calificacion} options={{ headerShown: false }}/>
-        <Stack.Screen name="ingresarCalificaciones" component={ingresarCalificacion} options={{ headerShown: false }}/>
+        <Stack.Screen name="IngresarCalificaciones" component={IngresarCalificacion} options={{ headerShown: false }}/>
       </Stack.Navigator>
     </NavigationContainer>  
   );

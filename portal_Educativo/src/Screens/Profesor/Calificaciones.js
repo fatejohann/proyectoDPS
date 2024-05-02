@@ -9,7 +9,7 @@ export default function Calificacion() {
     const navigation = useNavigation();
 
     const irASubirCalificacion = () => {
-        navigation.navigate('ingresarCalificaciones')
+        navigation.navigate('IngresarCalificaciones')
     }
 
     return (

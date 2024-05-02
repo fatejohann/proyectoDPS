@@ -22,6 +22,11 @@ export default function Home (){
     navigation.navigate('Calificaciones')
  }
 
+ 
+ const irAHorario=()=>{
+    navigation.navigate('Horario')
+ }
+
     return(
         <View style={styles.container}>
 
@@ -32,8 +37,11 @@ export default function Home (){
             imagen={imagenProfesor}/>
 
             <View style={styles.BoxBtn}>
+
                 <View style={styles.btnHorario}>
+                <TouchableOpacity onPress={irAHorario}>
                     <Text style={styles.Text}>HORARIO DE CLASE</Text>
+                    </TouchableOpacity>
                     <Image 
                     source={horario}
                     style={styles.ImgBtn}/>

@@ -2,15 +2,58 @@ import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity } fr
 import ComponentHeader from "../../components/ComponentHeader";
 import colores from "../../utils/colores";
 
+import { collection, getDocs } from "firebase/firestore";
+import { db } from '../../firebase/credenciales';
 import { useNavigation } from '@react-navigation/native';
 import imagenProfesor from '../../utils/img/profesor.png'
+import { useEffect, useState } from 'react';
+
 export default function Calificacion() {
 
     const navigation = useNavigation();
 
-    const irASubirCalificacion = () => {
-        navigation.navigate('IngresarCalificaciones')
+    const [materias, setMaterias] = useState([]);
+
+    async function getMaterias() {
+        try {
+            const materiasSnapshot = await getDocs(collection(db, 'materias'));
+            const materiasArray = [];
+            for (const doc of materiasSnapshot.docs) {
+                const materia = {
+                    ...doc.data(),
+                    id: doc.id,
+                    alumnos: []
+                };
+
+                // Consulta a la subcolección 'alumnos' para cada materia
+                const alumnosSnapshot = await getDocs(collection(db, `materias/${doc.id}/alumnos`));
+                alumnosSnapshot.forEach(alumnoDoc => {
+                    materia.alumnos.push({
+                        ...alumnoDoc.data(),
+                        id: alumnoDoc.id
+                    });
+
+                });
+
+                materiasArray.push(materia);
+            }
+            setMaterias(materiasArray);
+            console.log(materiasArray);
+        } catch (error) {
+            console.error("Error al obtener los documentos: ", error);
+        }
     }
+
+    useEffect(() => {
+        getMaterias();
+    }, []);
+
+
+    //le pasamos como parametro la materia, para poder ver todas sus actividades
+    const irASubirCalificacion = (materia) => {
+        navigation.navigate('IngresarCalificaciones', { materia });
+    }
+    
 
     return (
         <View style={styles.container}>
@@ -22,64 +65,28 @@ export default function Calificacion() {
             />
 
 
-            <View style={styles.boxMaterias} >
-
-                <Text style={styles.TextMateria}>
-                    Algebra
-                </Text>
-
-                <View style={styles.materias} >
-                    <Text style={styles.materias_Text}>
-                        Alumno 1
-                    </Text>
-
-
-                    <TouchableOpacity onPress={irASubirCalificacion}>
-                        <Text style={styles.materias_Text}>
-                            Ver Actividades
+            <View style={styles.boxMaterias}>
+                {materias.map(materia => (
+                    <View key={materia.id} style={styles.materiaContainer}>
+                        <Text style={styles.TextMateria}>
+                            {materia.nombreMateria}
                         </Text>
-                    </TouchableOpacity>
+                        {materia.alumnos && materia.alumnos.map((alumno, index) => (
+                            <View key={index} style={styles.materias}>
+                                <Text style={styles.materias_Text}>
+                                    {alumno.nombre}
+                                </Text>
+                                <TouchableOpacity onPress={() => irASubirCalificacion(materia)}>
+                                    <Text style={styles.materias_Text}>
+                                        Ver Actividades
+                                    </Text>
+                                </TouchableOpacity>
 
-                </View>
-                <View style={styles.materias} >
-                    <Text style={styles.materias_Text}>
-                        Alumno 2
-                    </Text>
-
-                    <TouchableOpacity onPress={irASubirCalificacion}>
-                        <Text style={styles.materias_Text}>
-                            Ver Actividades
-                        </Text>
-                    </TouchableOpacity>
-
-                </View>
-                <View style={styles.materias} >
-                    <Text style={styles.materias_Text}>
-                        Alumno 3
-                    </Text>
-                    <TouchableOpacity onPress={irASubirCalificacion}>
-                        <Text style={styles.materias_Text}>
-                            Ver Actividades
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.materias} >
-                    <Text style={styles.materias_Text}>
-                        Alumno 4
-                    </Text>
-
-                    <TouchableOpacity onPress={irASubirCalificacion}>
-                        <Text style={styles.materias_Text}>
-                            Ver Actividades
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-
-
+                            </View>
+                        ))}
+                    </View>
+                ))}
             </View>
-
-
-
         </View>
     )
 }

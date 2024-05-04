@@ -1,168 +1,133 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, FlatList } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // Importa Ionicons desde '@expo/vector-icons'
+import React from "react";
 
-export default function AlumnosHome() {
-  const [selectedSubject, setSelectedSubject] = useState(null);
-  const [subjects, setSubjects] = useState([
-    { id: 1, name: 'Nombre 1' },
-    { id: 2, name: 'Nombre 2' },
-    { id: 3, name: 'Nombre 3' },
-    { id: 4, name: 'Nombre 4' },
-  ]);
-  const [activities, setActivities] = useState([
-    { id: 1, name: 'Actividad 1', grade: 0.0 },
-    { id: 2, name: 'Actividad 2', grade: 0.0 },
-  ]);
+import { StyleSheet, Text, View, Image, TextInput,Button, TouchableOpacity} from 'react-native';
+import ComponentHeader from "../../components/ComponentHeader";
+import colores from "../../utils/colores";
 
-  const handleSubjectSelect = (subject) => {
-    setSelectedSubject(subject);
-  };
+//Images
+import imagenAlumno from '../../utils/img/alumno.png'
+import horario from '../../utils/img/horario.png'
+import calificaciones from '../../utils/img/calificaciones.png'
 
-  const handleGoBack = () => {
-    setSelectedSubject(null);
-  };
+import actividades from '../../utils/img/actividades.png'
 
-  const renderSubject = ({ item }) => (
-    <TouchableOpacity
-      style={styles.subjectButton}
-      onPress={() => handleSubjectSelect(item)}
-    >
-      <Text style={styles.subjectButtonText}>{item.name}</Text>
-      <Text style={styles.viewNotes}>Ver notas</Text>
-    </TouchableOpacity>
-  );
+import { useNavigation } from '@react-navigation/native';
 
-  const renderActivity = ({ item }) => (
-    <View style={styles.activityContainer}>
-      <Text style={styles.activityName}>{item.name}</Text>
-      <Text style={styles.activityGrade}>Nota Actual: {item.grade}</Text>
-    </View>
-  );
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        {selectedSubject ? (
-          <TouchableOpacity onPress={handleGoBack} style={styles.goBackContainer}>
-            <Ionicons name="arrow-back" size={24} color="white" />
-          </TouchableOpacity>
-        ) : (
-          <View style={styles.emptyHeaderSpace} />
-        )}
-        <Text style={styles.header}>Calificaciones</Text>
-        <TouchableOpacity style={styles.userIconContainer}>
-          <Ionicons name="person-circle-outline" size={24} color="white" />
-        </TouchableOpacity>
-      </View>
-      {selectedSubject ? (
-        <>
-          <Text style={styles.subHeader}>Calificaciones disponibles</Text>
-          <FlatList
-            data={activities}
-            renderItem={renderActivity}
-            keyExtractor={(item) => item.id.toString()}
-          />
-        </>
-      ) : (
-        <>
-          <Text style={styles.subHeader}>Selecciona la materia la cual quieres revisar tus notas</Text>
-          <FlatList
-            data={subjects}
-            renderItem={renderSubject}
-            keyExtractor={(item) => item.id.toString()}
-          />
-        </>
-      )}
-    </View>
-  );
+export default function AlumnosHome(){
+
+ const navigation = useNavigation();
+
+ const irACalificacion=()=>{
+    navigation.navigate('AlumnoCalificaciones')
+ }
+ 
+ const irAActividades=()=>{
+   navigation.navigate('AlumnoActividades')
+ }
+
+ 
+ const irAHorario=()=>{
+    navigation.navigate('HorarioAlumno')
+ }
+
+    return(
+        <View style={styles.container}>
+
+        <ComponentHeader 
+            textHeader="Hola Julian Mamahuebo" 
+            descrip="Bienvenido Julian mamahuebo, ¿Que desea Realizar?" 
+            textFooter="Opciones Disponibles"
+            imagen={imagenAlumno}/>
+
+            <View style={styles.BoxBtn}>
+
+                <View style={styles.btnHorario}>
+                <TouchableOpacity onPress={irAHorario}>
+                    <Text style={styles.Text}>HORARIO DE CLASE</Text>
+                    </TouchableOpacity>
+                    <Image 
+                    source={horario}
+                    style={styles.ImgBtn}/>
+                </View>
+
+                <View style={styles.btnCalificaciones}>
+                    
+                    <TouchableOpacity onPress={irACalificacion}>
+                    <Text style={styles.Text}>Ver mis calificaciones</Text>
+                    </TouchableOpacity>
+                    <Image 
+                    source={calificaciones}
+                    style={styles.ImgBtn}/>
+                </View>
+                
+                <View style={styles.btnActividades}>
+                  <TouchableOpacity onPress={irAActividades}>
+                      <Text style={styles.Text}>Ver Actividades</Text>
+                      </TouchableOpacity>
+                      <Image 
+                      source={actividades}
+                      style={styles.ImgBtn}/>
+                      </View>
+                
+            </View>
+        </View>
+       
+    )
 }
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#4285F4', // Color de fondo azul
-      padding: 20,
+    container:{
+       backgroundColor:colores.COLOR_CELESTE,
     },
-    headerContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
+    BoxBtn: {
+        backgroundColor:colores.COLOR_BLANCO,
+        height:"100%",
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+
+        alignItems:"center",
+        justifyContent:"start",
+        flexDirection:"column",
     },
-    header: {
-      fontSize: 24,
-      fontWeight: 'bold',
-      color: '#fff', // Texto blanco
-      marginBottom: 20,
+    btnHorario:{
+        flexDirection:"row",
+        width:"80%",
+        height:"10%",
+        backgroundColor:colores.COLOR_VERDE,
+        borderRadius:10,
+        margin:30,
+        alignItems: 'center',
+        justifyContent:"space-around",
     },
-    subHeader: {
-      fontSize: 18,
-      color: '#fff', // Texto blanco
-      marginBottom: 10,
+    Text:{
+        color:colores.COLOR_BLANCO,
+        fontSize:25,
+        fontFamily:"JockeyOne",
+    },  
+    ImgBtn:{
+        width:100,
+        height:100
     },
-    subjectButton: {
-      backgroundColor: '#fff', // Botón blanco
-      paddingVertical: 15,
-      paddingHorizontal: 20,
-      borderRadius: 10, // Bordes redondeados
-      marginBottom: 10,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      shadowColor: '#000', // Sombra
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 3.84,
-      elevation: 5, // Elevación en Android
+    btnCalificaciones:{
+        flexDirection:"row",
+        width:"80%",
+        height:"10%",
+        backgroundColor:colores.COLOR_MORADO,
+        borderRadius:10,
+        margin:30,
+        alignItems: 'center',
+        justifyContent:"space-around",
     },
-    subjectButtonText: {
-      fontSize: 16,
-      color: '#4285F4', // Texto azul
-      fontWeight: 'bold', // Negrita
+    btnActividades:{
+        flexDirection:"row",
+        width:"80%",
+        height:"10%",
+        backgroundColor:colores.COLOR_ANARANJADO,
+        borderRadius:10,
+        margin:30,
+        alignItems: 'center',
+        justifyContent:"space-around",
     },
-    viewNotes: {
-      fontSize: 14,
-      color: '#4285F4', // Texto azul
-    },
-    activityContainer: {
-      backgroundColor: '#fff', // Fondo blanco
-      paddingVertical: 15,
-      paddingHorizontal: 20,
-      borderRadius: 10, // Bordes redondeados
-      marginBottom: 10,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      shadowColor: '#000', // Sombra
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 3.84,
-      elevation: 5, // Elevación en Android
-    },
-    activityName: {
-      fontSize: 16,
-      color: '#4285F4', // Texto azul
-      fontWeight: 'bold', // Negrita
-    },
-    activityGrade: {
-      fontSize: 16,
-      color: '#4285F4', // Texto azul
-    },
-    userIconContainer: {
-      padding: 10,
-      borderRadius: 100,
-      backgroundColor: '#4285F4', // Color de fondo azul
-    },
-    goBackContainer: {
-      padding: 10,
-    },
-    emptyHeaderSpace: {
-      width: 24, // Ancho igual al tamaño del icono
-    },
-  });
+});
+    

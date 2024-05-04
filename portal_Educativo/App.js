@@ -13,9 +13,12 @@ import * as Font from 'expo-font'
 
 import Home from './src/Screens/Profesor/Home';
 import AlumnosHome from './src/Screens/alumnos/Alumnoshome';
+import HorarioAlumno from './src/Screens/alumnos/HorarioAlumno';
+import AlumnoActividades from './src/Screens/alumnos/AlumnoActividades';
 import Calificacion from './src/Screens/Profesor/Calificaciones';
-import IngresarCalificacion from './src/Screens/Profesor/IngresarCalificaciones';
 import Horario from './src/Screens/Profesor/Horario';
+import IngresarCalificaciones from './src/Screens/Profesor/IngresarCalificaciones';
+import AlumnoCalificaciones from './src/Screens/alumnos/AlumnoCalificaciones';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -37,19 +40,23 @@ export default function App() {
   
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Login' >
+      <Stack.Navigator initialRouteName='Home' >
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }}/>
         <Stack.Screen name="Registro" component={Registro}  options={{ headerShown: false }}/> 
 
       {/* Vistas de la parte del alumno */}
         <Stack.Screen name="AlumnoHome" component={AlumnosHome} options={{ headerShown: false }}/>
-
-
+        <Stack.Screen name="HorarioAlumno" component={HorarioAlumno} options={{ headerShown: false }}/>
+        <Stack.Screen name="AlumnoCalificaciones" component={AlumnoCalificaciones} options={{ headerShown: false }}/>
+      
+        <Stack.Screen name="AlumnoActividades" component={AlumnoActividades} options={{ headerShown: false }}/>
+      
       {/* Vistas de la parte del profesor */}
         <Stack.Screen name="Home" component={Home} options={{ headerShown: false }}/>
         <Stack.Screen name="Horario" component={Horario} options={{ headerShown: false }}/>
         <Stack.Screen name="Calificaciones" component={Calificacion} options={{ headerShown: false }}/>
-        <Stack.Screen name="IngresarCalificaciones" component={IngresarCalificacion} options={{ headerShown: false }}/>
+        <Stack.Screen name="IngresarCalificaciones" component={IngresarCalificaciones} options={{ headerShown: false }}/>
+        
       </Stack.Navigator>
     </NavigationContainer>  
   );

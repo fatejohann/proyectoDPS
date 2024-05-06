@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity, ScrollView } from 'react-native';
 import ComponentHeader from "../../components/ComponentHeader";
 import { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
@@ -96,12 +96,13 @@ export default function IngresarCalificaciones({ route }) {
             <View style={styles.boxActividades}>
                 <Text style={styles.TextActividades}>Actividades</Text>
                 <Button title="Guardar Notas" onPress={guardarNotas} />
-
+        
                 {actividades && actividades.map(actividad => (
+                
                     <View key={actividad.id} style={styles.Actividades}>
                         {actividad.notas.map(nota => (
                             <View key={nota.id} style={styles.ingresoNota}>
-
+                        
                                 <Text style={styles.Actividades_text}>{actividad.actividad}</Text>
 
                                 <Text style={styles.Actividades_text}>Ingresa la nota</Text>
@@ -117,6 +118,7 @@ export default function IngresarCalificaciones({ route }) {
                                     Nota Actual: {nota.valor}
                                 </Text>
                             </View>
+                            
                         ))}
                     </View>
                 ))}

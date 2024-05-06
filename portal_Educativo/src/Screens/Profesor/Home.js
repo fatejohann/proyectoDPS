@@ -27,6 +27,11 @@ export default function Home (){
     navigation.navigate('Horario')
  }
 
+ 
+ const irActividades=()=>{
+    navigation.navigate('Actividades')
+ }
+
     return(
         <View style={styles.container}>
 
@@ -58,11 +63,14 @@ export default function Home (){
                 </View>
                 
                 <View style={styles.btnActividades}>
-                    <Text style={styles.Text}>SUBIR ACTIVIDADES</Text>
+                <TouchableOpacity onPress={irActividades}>
+                    <Text style={styles.Text}>SUBIR CALIFICACIONES</Text>
+                    </TouchableOpacity>
                     <Image 
-                    source={actividades}
+                    source={calificaciones}
                     style={styles.ImgBtn}/>
                 </View>
+                
                 
             </View>
         </View>

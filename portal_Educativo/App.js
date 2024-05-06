@@ -19,6 +19,8 @@ import Calificacion from './src/Screens/Profesor/Calificaciones';
 import Horario from './src/Screens/Profesor/Horario';
 import IngresarCalificaciones from './src/Screens/Profesor/IngresarCalificaciones';
 import AlumnoCalificaciones from './src/Screens/alumnos/AlumnoCalificaciones';
+import Actividades from './src/Screens/Profesor/Actividades';
+import IngresarActividades from './src/Screens/Profesor/IngresarActividades';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -40,7 +42,7 @@ export default function App() {
   
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Login' >
+      <Stack.Navigator initialRouteName='Home' >
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }}/>
         <Stack.Screen name="Registro" component={Registro}  options={{ headerShown: false }}/> 
 
@@ -48,7 +50,7 @@ export default function App() {
         <Stack.Screen name="AlumnoHome" component={AlumnosHome} options={{ headerShown: false }}/>
         <Stack.Screen name="HorarioAlumno" component={HorarioAlumno} options={{ headerShown: false }}/>
         <Stack.Screen name="AlumnoCalificaciones" component={AlumnoCalificaciones} options={{ headerShown: false }}/>
-      
+
         <Stack.Screen name="AlumnoActividades" component={AlumnoActividades} options={{ headerShown: false }}/>
       
       {/* Vistas de la parte del profesor */}
@@ -56,7 +58,8 @@ export default function App() {
         <Stack.Screen name="Horario" component={Horario} options={{ headerShown: false }}/>
         <Stack.Screen name="Calificaciones" component={Calificacion} options={{ headerShown: false }}/>
         <Stack.Screen name="IngresarCalificaciones" component={IngresarCalificaciones} options={{ headerShown: false }}/>
-        
+        <Stack.Screen name="Actividades" component={Actividades} options={{ headerShown: false }}/>
+        <Stack.Screen name="IngresarActividades" component={IngresarActividades} options={{ headerShown: false }}/>
       </Stack.Navigator>
     </NavigationContainer>  
   );

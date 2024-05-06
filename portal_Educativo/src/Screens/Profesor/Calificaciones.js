@@ -13,7 +13,7 @@ export default function Calificacion() {
     const navigation = useNavigation();
 
     const [materias, setMaterias] = useState([]);
-
+ 
     async function getMaterias() {
         try {
             const materiasSnapshot = await getDocs(collection(db, 'materias'));
@@ -49,10 +49,12 @@ export default function Calificacion() {
     }, []);
 
 
-    //le pasamos como parametro la materia, para poder ver todas sus actividades
-    const irASubirCalificacion = (materia) => {
-        navigation.navigate('IngresarCalificaciones', { materia });
+    //le pasamos como parametro la materia y alumno para poder ver todas sus actividades
+    const irASubirCalificacion = (materia, alumno) => {
+        navigation.navigate('IngresarCalificaciones', { materia, alumno });
     }
+    
+    
     
 
     return (
@@ -76,7 +78,7 @@ export default function Calificacion() {
                                 <Text style={styles.materias_Text}>
                                     {alumno.nombre}
                                 </Text>
-                                <TouchableOpacity onPress={() => irASubirCalificacion(materia)}>
+                                <TouchableOpacity onPress={() => irASubirCalificacion(materia, alumno)}>
                                     <Text style={styles.materias_Text}>
                                         Ver Actividades
                                     </Text>

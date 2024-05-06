@@ -10,108 +10,120 @@ import imagenProfesor from '../../utils/img/profesor.png'
 import colores from '../../utils/colores';
 export default function IngresarCalificaciones({ route }) {
 
-    const { materia } = route.params;
+    const navigation = useNavigation();
+
+    const { materia, alumno } = route.params;
 
     const [notas, setNotas] = useState({});
 
     const [actividades, setActividades] = useState();
 
     useEffect(() => {
-        const loadActividades = async () => {
-            if (materia && materia.id) {
-                const actividadesSnapshot = await getDocs(collection(db, `materias/${materia.id}/actividades`));
-                const actividadesConNotas = await Promise.all(
-                    actividadesSnapshot.docs.map(async (docActividad) => {
-                        const notasSnapshot = await getDocs(collection(db, `materias/${materia.id}/actividades/${docActividad.id}/notas`));
-                        const notas = notasSnapshot.docs.map(docNota => ({
-                            id: docNota.id,
-                            ...docNota.data()
-                        }));
-                        return {
-                            id: docActividad.id,
-                            ...docActividad.data(),
-                            notas
-                        };
-                    })
-                );
-                setActividades(actividadesConNotas);
-            }
+        const fetchActividadesConNotas = async () => {
+            const actividadesRef = collection(db, `materias/${materia.id}/actividades`);
+            const actividadesSnapshot = await getDocs(actividadesRef);
+            const actividadesList = await Promise.all(actividadesSnapshot.docs.map(async doc => {
+                const notasRef = collection(db, `materias/${materia.id}/actividades/${doc.id}/notas`);
+                const notasSnapshot = await getDocs(notasRef);
+                const notas = notasSnapshot.docs.map(notaDoc => ({
+                    id: notaDoc.id,
+                    ...notaDoc.data()
+                }));
+                return {
+                    id: doc.id,
+                    ...doc.data(),
+                    notas: notas
+                };
+            }));
+            setActividades(actividadesList);
         };
-        loadActividades();
+
+        fetchActividadesConNotas();
     }, [materia]);
 
-    //para manejar subir las notas
-    const handleNotaChange = (actividadId, text) => {
-        // Ensure the text is stored as a string in state
-        setNotas(prevNotas => ({
-            ...prevNotas,
-            [actividadId]: text
-        }));
-    };
-    
-    const guardarNotas = async () => {
-        for (const actividadId in notas) {
-            const noteValue = notas[actividadId];
-            const noteDocRef = doc(db, `materias/${materia.id}/actividades/${actividadId}/notas/noteId`); // Update 'noteId' accordingly
-            try {
-                await updateDoc(noteDocRef, { valor: noteValue });
-                console.log("Nota actualizada correctamente");
-            } catch (error) {
-                console.error("Error al actualizar la nota: ", error);
-            }
+    const handleNotaChange = (nota, actividadId, notaId) => {
+        const valorNota = parseFloat(nota);
+          // Primero verificamos que el valor esté dentro del rango permitido
+    if (valorNota < 0 || valorNota > 10) {
+        alert('La nota debe estar entre 0 y 10');
+        return;
+    }
+
+   // Verificación de precisión decimal
+   if (!/^\d+(\.\d{1,3})?$/.test(nota)) {
+    alert('La nota no puede tener más de tres decimales');
+    return;
+}
+
+    // Actualizamos el estado solo si las validaciones son correctas
+    setNotas(prevNotas => ({
+        ...prevNotas,
+        [actividadId]: {
+            ...prevNotas[actividadId],
+            [notaId]: valorNota 
         }
-        alert('Notas actualizadas correctamente');
+    }));
+
     };
 
+    const guardarNotas = async () => {
+        try {
+            for (const [actividadId, actividadNotas] of Object.entries(notas)) {
+                for (const [notaId, notaValor] of Object.entries(actividadNotas)) {
+                    const notaRef = doc(db, `materias/${materia.id}/actividades/${actividadId}/notas/${notaId}`);
+                    await updateDoc(notaRef, { valor: notaValor });
+                }
+            }
+            alert('Notas guardadas correctamente!');
 
+            navigation.navigate('Calificaciones');
+        } catch (error) {
+            console.error('Error al guardar notas:', error);
+            alert('Error al guardar notas');
+        }
+
+    };
 
     return (
-
         <View style={styles.container}>
             <ComponentHeader
                 textHeader="Calificaciones"
-                descrip="Informacion del alumno: Alumno 1, Algebra"
-                textFooter="Ingresa la nota segun actividad "
+                descrip={`Información del alumno: Nombre: ${alumno.nombre}, Materia: ${materia.nombreMateria}`}
+                textFooter="Selecciona alumno"
                 imagen={imagenProfesor}
             />
+
             <View style={styles.boxActividades}>
-                <Text style={styles.TextActividades}>
-                    Actividades
-                </Text>
+                <Text style={styles.TextActividades}>Actividades</Text>
                 <Button title="Guardar Notas" onPress={guardarNotas} />
 
                 {actividades && actividades.map(actividad => (
                     <View key={actividad.id} style={styles.Actividades}>
-                        <View style={styles.ingresoNota}>
-                            <Text style={styles.Actividades_text}>
-                                {actividad.actividad}  
-                            </Text>
-                            <Text style={styles.Actividades_text}>
-                                Ingresa la nota
-                            </Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="nota"
-                                value={notas[actividad.id] ? notas[actividad.id].toString() : ''}
-                                onChangeText={(text) => handleNotaChange(actividad.id, text)}
-                            />
-                        </View>
-                        <View style={styles.notaActual}>
-                            <Text style={styles.Actividades_text}>
-                                Nota Actual
-                            </Text>
-                            <Text style={styles.Actividades_text}>
-                            {notas[actividad.id] ? notas[actividad.id].score : 'N/A'} 
-           
-                            </Text>
-                        </View>
+                        {actividad.notas.map(nota => (
+                            <View key={nota.id} style={styles.ingresoNota}>
+
+                                <Text style={styles.Actividades_text}>{actividad.actividad}</Text>
+
+                                <Text style={styles.Actividades_text}>Ingresa la nota</Text>
+
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Ingresa nota"
+                                    onChangeText={(text) => handleNotaChange(text, actividad.id, nota.id)}
+                                    value={notas[actividad.id] && notas[actividad.id][nota.id] || ''}
+                                    keyboardType="numeric"
+                                />
+                                <Text style={styles.Actividades_text}>
+                                    Nota Actual: {nota.valor}
+                                </Text>
+                            </View>
+                        ))}
                     </View>
                 ))}
             </View>
-
         </View>
+    );
 
-    )
 }
 
 
@@ -149,16 +161,16 @@ const styles = StyleSheet.create({
     },
     Actividades: {
         width: 300,
-        height: 130,
+        height: 150,
         backgroundColor: colores.COLOR_MORADO,
         borderRadius: 10,
-
+        flexDirection: 'row',
         marginTop: 80,
         justifyContent: "center",
         alignItems: 'center',
         justifyContent: 'space-evenly',
-        flexDirection: 'row',
     },
+
     ingresoNota: {
         flex: 1,
         padding: 10,

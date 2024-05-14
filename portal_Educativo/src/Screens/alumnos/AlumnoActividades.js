@@ -1,31 +1,51 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, FlatList } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // Importa Ionicons desde '@expo/vector-icons'
+import { Ionicons } from '@expo/vector-icons';
 import colores from "../../utils/colores";
 import ComponentHeader from "../../components/ComponentHeader";
-//Images
-import imagenAlumno from '../../utils/img/alumno.png'
-import horario from '../../utils/img/horario.png'
-import calificaciones from '../../utils/img/calificaciones.png'
-
-import actividades from '../../utils/img/actividades.png'
+import { collection, getDocs, doc } from 'firebase/firestore';
+import { db } from '../../firebase/credenciales';
+import imagenAlumno from '../../utils/img/alumno.png';
 
 export default function AlumnoActividades() {
   const [selectedSubject, setSelectedSubject] = useState(null);
-  const [subjects, setSubjects] = useState([
-    { id: 1, name: 'Algebra' },
-    { id: 2, name: 'Programacion orientada a objetos' },
-    { id: 3, name: 'Pensamiento social cristiano' },
-    { id: 4, name: 'Otras mas jkssa' },
-  ]);
-  const [activities, setActivities] = useState([
-    { id: 1, name: 'Actividad 1', text: 'Nota actual', entrega:'13/04/2024', Estado:'Enviado',  grade: 0.0 },
-    { id: 2, name: 'Actividad 2', text: 'Nota actual', entrega:'05/05/2024', Estado:'Pendiente',  grade: 0.0 },
-  ]);
+  const [subjects, setSubjects] = useState([]);
+
+  useEffect(() => {
+    const fetchSubjects = async () => {
+      try {
+        const subjectsCollection = collection(db, 'materias');
+        const subjectsSnapshot = await getDocs(subjectsCollection);
+        const subjectsData = subjectsSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setSubjects(subjectsData);
+      } catch (error) {
+        console.error('Error al obtener las materias:', error);
+      }
+    };
+
+    fetchSubjects();
+  }, []);
+
+  const fetchActivities = async (subject) => {
+    try {
+      const subjectRef = doc(db, 'materias', subject.id);
+      const activitiesCollection = collection(subjectRef, 'actividades');
+      const activitiesSnapshot = await getDocs(activitiesCollection);
+      const activitiesData = activitiesSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setSelectedSubject({ ...subject, activities: activitiesData });
+    } catch (error) {
+      console.error('Error al obtener las actividades:', error);
+    }
+  };
 
   const handleSubjectSelect = (subject) => {
-    setSelectedSubject(subject);
+    fetchActivities(subject);
   };
 
   const handleGoBack = () => {
@@ -37,29 +57,26 @@ export default function AlumnoActividades() {
       style={styles.subjectButton}
       onPress={() => handleSubjectSelect(item)}
     >
-      <Text style={styles.subjectButtonText}>{item.name}</Text>
-      <Text style={styles.viewNotes}>Ver actividades</Text>
+      <Text style={styles.subjectButtonText}>{item.nombreMateria}</Text>
+      <Text style={styles.viewActivities}>Ver actividades</Text>
     </TouchableOpacity>
   );
 
   const renderActivity = ({ item }) => (
-  <View style={styles.activityContainer}>
-    <Text style={styles.activityName}>{item.name}</Text>
-    <Text style={styles.activityEntrega}>Fecha de entrega: {item.entrega}</Text>
-    <Text style={styles.activityEstado}>Estado: {item.Estado}</Text>
-    <Text style={styles.activityGrade}>Nota Actual: {item.grade}</Text>
-  </View>
-);
+    <View style={styles.activityContainer}>
+      <Text style={styles.activityName}>{item.nombre}</Text>
+      <Text style={styles.activityEntrega}>Fecha de entrega: {item.fechaEntrega}</Text>
+      
+    </View>
+  );
 
   return (
-    
-    <View style={styles.BoxBtn}>
-    <ComponentHeader 
-            textHeader="Hola Alumno" 
-            descrip="Bienvenido Alumno, ¿Que desea Realizar?" 
-            textFooter="Opciones Disponibles"
-            imagen={imagenAlumno}/>
-
+    <View style={styles.container}>
+      <ComponentHeader 
+        textHeader="Hola Alumno" 
+        descrip="Bienvenido Alumno, ¿Qué desea Realizar?" 
+        textFooter="Opciones Disponibles"
+        imagen={imagenAlumno}/>
       <View style={styles.headerContainer}>
         {selectedSubject ? (
           <TouchableOpacity onPress={handleGoBack} style={styles.goBackContainer}>
@@ -69,20 +86,19 @@ export default function AlumnoActividades() {
           <View style={styles.emptyHeaderSpace} />
         )}
         <Text style={styles.header}>Actividades</Text>
-        
       </View>
       {selectedSubject ? (
         <>
-          <Text style={styles.subHeader}>Actividades disponibles</Text>
+          <Text style={styles.subHeader}>Actividades disponibles para {selectedSubject.nombreMateria}</Text>
           <FlatList
-            data={activities}
+            data={selectedSubject.activities}
             renderItem={renderActivity}
             keyExtractor={(item) => item.id.toString()}
           />
         </>
       ) : (
         <>
-          <Text style={styles.subHeader}>Selecciona la materia la cual quieres revisar tus actividades</Text>
+          <Text style={styles.subHeader}>Selecciona la materia para ver sus actividades</Text>
           <FlatList
             data={subjects}
             renderItem={renderSubject}
@@ -95,100 +111,96 @@ export default function AlumnoActividades() {
 }
 
 const styles = StyleSheet.create({
-      BoxBtn: {
+  container: {
+    flex: 1,
     backgroundColor: colores.COLOR_BLANCO,
-    height: "100%",
-    borderTopLeftRadius: 40, 
-    borderTopRightRadius: 40, 
-    padding: 20,
-    alignItems: "center",
-    justifyContent: "start",
-    flexDirection: "column",
   },
-    headerContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: colores.COLOR_CELESTE,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: colores.COLOR_BLANCO,
+  },
+  subHeader: {
+    fontSize: 18,
+    color: colores.COLOR_AZUL,
+    marginBottom: 10,
+    paddingHorizontal: 20,
+    marginTop: 10,
+  },
+  subjectButton: {
+    backgroundColor: colores.COLOR_BLANCO,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginBottom: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    shadowColor: colores.COLOR_GRIS_CLARO,
+    shadowOffset: {
+      width: 0,
+      height: 2,
     },
-    header: {
-      fontSize: 24,
-      fontWeight: 'bold',
-      color: 'black', // Texto blanco
-      marginBottom: 20,
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  subjectButtonText: {
+    fontSize: 16,
+    color: colores.COLOR_AZUL,
+    fontWeight: 'bold',
+  },
+  viewActivities: {
+    fontSize: 14,
+    color: colores.COLOR_AZUL,
+  },
+  activityContainer: {
+    backgroundColor: colores.COLOR_BLANCO,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginBottom: 10,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    shadowColor: colores.COLOR_GRIS_CLARO,
+    shadowOffset: {
+      width: 0,
+      height: 2,
     },
-    subHeader: {
-      fontSize: 18,
-      color: 'black', // Texto blanco
-      marginBottom: 10,
-      
-      
-    },
-    subjectButton: {
-      backgroundColor: '#fff', // Botón blanco
-      paddingVertical: 15,
-      paddingHorizontal: 20,
-      borderRadius: 10, // Bordes redondeados
-      marginBottom: 10,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      shadowColor: '#000', // Sombra
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 3.84,
-      elevation: 5, // Elevación en Android
-    },
-    subjectButtonText: {
-      fontSize: 16,
-      color: '#4285F4', // Texto azul
-      fontWeight: 'bold', // Negrita
-    },
-    viewNotes: {
-      fontSize: 14,
-      color: '#4285F4', // Texto azul
-    },
-    activityContainer: {
-      backgroundColor: '#fff', // Fondo blanco
-      paddingVertical: 15,
-      paddingHorizontal: 20,
-      borderRadius: 10, // Bordes redondeados
-      marginBottom: 10,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      shadowColor: '#000', // Sombra
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 3.84,
-      elevation: 5, // Elevación en Android
-    },
-    activityName: {
-      fontSize: 16,
-      color: '#4285F4', // Texto azul
-      fontWeight: 'bold', // Negrita
-    },
-    activityGrade: {
-      fontSize: 16,
-      color: '#4285F4', // Texto azul
-    },
-    activityEntrega: {
-      fontSize: 16,
-      color: '#4285F4', // Texto azul
-    },
-    activityEstado: {
-      fontSize: 16,
-      color: '#4285F4', // Texto azul
-    },
-    goBackContainer: {
-      padding: 10,
-    },
-    emptyHeaderSpace: {
-      width: 30, // Ancho igual al tamaño del icono
-    },
-  });
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  activityName: {
+    fontSize: 16,
+    color: colores.COLOR_AZUL,
+    fontWeight: 'bold',
+  },
+  activityEntrega: {
+    fontSize: 14,
+    color: colores.COLOR_AZUL,
+  },
+  activityEstado: {
+    fontSize: 14,
+    color: colores.COLOR_AZUL,
+  },
+  activityGrade: {
+    fontSize: 16,
+    color: colores.COLOR_AZUL,
+  },
+  goBackContainer: {
+    padding: 10,
+  },
+  emptyHeaderSpace: {
+    width: 24,
+  },
+});

@@ -35,8 +35,8 @@ export default function AlumnosHome(){
         <View style={styles.container}>
 
         <ComponentHeader 
-            textHeader="Hola Julian Mamahuebo" 
-            descrip="Bienvenido Julian mamahuebo, ¿Que desea Realizar?" 
+            textHeader="Hola Estudiante" 
+            descrip="Bienvenido Estudiante, ¿Que desea Realizar?" 
             textFooter="Opciones Disponibles"
             imagen={imagenAlumno}/>
 
